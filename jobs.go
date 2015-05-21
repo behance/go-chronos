@@ -1,8 +1,6 @@
 package chronos
 
-type Jobs struct {
-	Jobs []Job
-}
+type Jobs []Job
 
 type Job struct {
 	Name                   string              `json:"name",omitempty`
@@ -28,7 +26,7 @@ type Job struct {
 	DataProcessingJobType  bool                `json:"dataProcessingJobType",omitempty`
 	ErrorsSinceLastSuccess int                 `json:"errorsSinceLastSuccess",omitempty`
 	URIs                   []string            `json:"uris",omitempty`
-	EnvironmentVariables   []map[string]string `json:"",omitempty`
+	EnvironmentVariables   []map[string]string `json:"environmentVariables",omitempty`
 	Arguments              []string            `json:"arguments",omitempty`
 	HighPriority           bool                `json:"highPriority",omitempty`
 	RunAsUser              string              `json:"runAsUser",omitempty`
@@ -43,7 +41,7 @@ type Job struct {
 func (client *Client) Jobs() (*Jobs, error) {
 	jobs := new(Jobs)
 
-	if err := client.apiGet(CHRONOS_API_JOBS, &jobs.Jobs); err != nil {
+	if err := client.apiGet(CHRONOS_API_JOBS, jobs); err != nil {
 		return nil, err
 	} else {
 		return jobs, nil

@@ -15,7 +15,7 @@ const (
 	HTTP_POST   = "POST"
 )
 
-type Chronos interface {
+type ChronosClient interface {
 	Jobs() (*Jobs, error)
 }
 
@@ -24,7 +24,7 @@ type Client struct {
 	http   *http.Client
 }
 
-func NewClient(config Config) (Chronos, error) {
+func NewClient(config Config) (ChronosClient, error) {
 	client := new(Client)
 
 	client.config = config
