@@ -45,8 +45,6 @@ func (client *Client) apiGet(uri string, result interface{}) error {
 }
 
 func (client *Client) apiCall(method, uri, body string, result interface{}) (int, error) {
-	client.log("apiCall() method: %s, uri: %s, body: %s", method, uri, body)
-
 	var status int
 	var response *http.Response
 	var err error
