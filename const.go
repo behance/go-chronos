@@ -1,6 +1,6 @@
 package chronos
 
+// Constants definig the various chronos endpoints
 const (
-	/* --- api related constants --- */
-	CHRONOS_API_JOBS = "scheduler/jobs"
+	ChronosAPIJobs = "scheduler/jobs"
 )

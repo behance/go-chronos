@@ -1,5 +1,6 @@
 package chronos
 
+// A Config defines a client configuration
 type Config struct {
 	/* the url for chronos */
 	URL string
@@ -9,6 +10,8 @@ type Config struct {
 	RequestTimeout int
 }
 
+// NewDefaultConfig returns a default configuration.
+// Helpful for local testing/development.
 func NewDefaultConfig() Config {
 	return Config{
 		URL:            "http://127.0.0.1:4400",

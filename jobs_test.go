@@ -2,7 +2,6 @@ package chronos_test
 
 import (
 	"net/http"
-	"fmt"
 
 	. "github.com/behance/go-chronos"
 
@@ -15,7 +14,7 @@ import (
 var _ = Describe("Jobs", func() {
 	var (
 		config_stub Config
-		client      ChronosClient
+		client      Chronos
 		server      *ghttp.Server
 	)
 
