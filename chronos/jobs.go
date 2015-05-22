@@ -43,7 +43,9 @@ type Job struct {
 func (client *Client) Jobs() (*Jobs, error) {
 	jobs := new(Jobs)
 
-	if err := client.apiGet(ChronosAPIJobs, jobs); err != nil {
+	err := client.apiGet(ChronosAPIJobs, jobs)
+
+	if err != nil {
 		return nil, err
 	}
 
