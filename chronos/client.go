@@ -45,17 +45,18 @@ func (client *Client) apiGet(uri string, result interface{}) error {
 }
 
 func (client *Client) apiCall(method, uri, body string, result interface{}) (int, error) {
-	var status int
-	var response *http.Response
-	var err error
+	status, response, err := client.httpCall(method, uri, body)
 
-	if status, response, err = client.httpCall(method, uri, body); err != nil {
+	if err != nil {
 		return 0, err
 	}
 
-	if err = json.NewDecoder(response.Body).Decode(result); err != nil {
+	err = json.NewDecoder(response.Body).Decode(result)
+
+	if err != nil {
 		return status, err
 	}
+
 	// TODO: Handle error status codes
 	return status, nil
 }
@@ -67,11 +68,10 @@ func (client *Client) applyRequestHeaders(request *http.Request) {
 }
 
 func (client *Client) newRequest(method, uri, body string) (*http.Request, error) {
-	var request *http.Request
-	var err error
 	url := fmt.Sprintf("%s/%s", client.config.URL, uri)
+	request, err := http.NewRequest(method, url, strings.NewReader(body))
 
-	if request, err = http.NewRequest(method, url, strings.NewReader(body)); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
@@ -80,15 +80,15 @@ func (client *Client) newRequest(method, uri, body string) (*http.Request, error
 }
 
 func (client *Client) httpCall(method, uri, body string) (int, *http.Response, error) {
-	var request *http.Request
-	var response *http.Response
-	var err error
+	request, err := client.newRequest(method, uri, body)
 
-	if request, err = client.newRequest(method, uri, body); err != nil {
+	if err != nil {
 		return 0, nil, err
 	}
 
-	if response, err = client.http.Do(request); err != nil {
+	response, err := client.http.Do(request)
+
+	if err != nil {
 		return 0, nil, err
 	}
 
