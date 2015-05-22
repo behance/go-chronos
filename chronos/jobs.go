@@ -9,6 +9,7 @@ import (
 type Jobs []Job
 
 // A Job defines a chronos job
+// https://github.com/mesos/chronos/blob/master/docs/docs/api.md#job-configuration
 type Job struct {
 	Name                   string              `json:"name,omitempty"`
 	Command                string              `json:"command,omitempty"`
@@ -61,6 +62,12 @@ func (client *Client) Jobs() (*Jobs, error) {
 // name: The name of job you wish to delete
 func (client *Client) DeleteJob(name string) error {
 	return client.apiDelete(path.Join(ChronosAPIJob, name), nil)
+}
+
+// DeleteJobTasks will delete all tasks associated with a job.
+// name: The name of the job whose tasks you wish to delete
+func (client *Client) DeleteJobTasks(name string) error {
+	return client.apiDelete(path.Join(ChronosAPIKillJobTask, name), nil)
 }
 
 // StartJob can manually start a job
