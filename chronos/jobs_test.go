@@ -123,4 +123,24 @@ var _ = Describe("Jobs", func() {
 			}))
 		})
 	})
+
+	Describe("DeleteJob", func() {
+		var (
+			jobName = "fake_job"
+		)
+
+		BeforeEach(func() {
+			server.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("DELETE", "/scheduler/job/"+jobName),
+					ghttp.RespondWith(http.StatusOK, nil),
+				),
+			)
+		})
+
+		It("Makes the delete request", func() {
+			client.DeleteJob(jobName)
+			Expect(server.ReceivedRequests()).To(HaveLen(1))
+		})
+	})
 })

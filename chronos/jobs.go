@@ -1,5 +1,9 @@
 package chronos
 
+import (
+	"path"
+)
+
 // Jobs is a slice of jobs
 type Jobs []Job
 
@@ -50,4 +54,10 @@ func (client *Client) Jobs() (*Jobs, error) {
 	}
 
 	return jobs, nil
+}
+
+// DeleteJob will delete a chronos job
+// name: The name of job you wish to delete
+func (client *Client) DeleteJob(name string) error {
+	return client.apiDelete(path.Join(ChronosAPIJob, name), nil)
 }

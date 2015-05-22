@@ -19,6 +19,7 @@ const (
 // Chronos is a client that can interact with the chronos API
 type Chronos interface {
 	Jobs() (*Jobs, error)
+	DeleteJob(name string) error
 }
 
 // A Client can make http requests
@@ -40,8 +41,13 @@ func NewClient(config Config) (Chronos, error) {
 }
 
 func (client *Client) apiGet(uri string, result interface{}) error {
-	_, error := client.apiCall(HTTPGet, uri, "", result)
-	return error
+	_, err := client.apiCall(HTTPGet, uri, "", result)
+	return err
+}
+
+func (client *Client) apiDelete(uri string, result interface{}) error {
+	_, err := client.apiCall(HTTPDelete, uri, "", result)
+	return err
 }
 
 func (client *Client) apiCall(method, uri, body string, result interface{}) (int, error) {
