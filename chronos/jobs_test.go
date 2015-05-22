@@ -132,7 +132,7 @@ var _ = Describe("Jobs", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("DELETE", "/scheduler/job/" + jobName),
+					ghttp.VerifyRequest("DELETE", "/scheduler/job/"+jobName),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
 			)

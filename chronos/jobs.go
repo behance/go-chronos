@@ -59,6 +59,5 @@ func (client *Client) Jobs() (*Jobs, error) {
 // DeleteJob will delete a chronos job
 // name: The name of job you wish to delete
 func (client *Client) DeleteJob(name string) error {
-	client.log("IM OVER HERE")
 	return client.apiDelete(path.Join(ChronosAPIJob, name), nil)
 }

@@ -19,7 +19,7 @@ const (
 // Chronos is a client that can interact with the chronos API
 type Chronos interface {
 	Jobs() (*Jobs, error)
-	DeleteJob(name string) (error)
+	DeleteJob(name string) error
 }
 
 // A Client can make http requests
