@@ -210,4 +210,22 @@ var _ = Describe("Jobs", func() {
 			})
 		})
 	})
+
+	Describe("AddScheduledJob", func() {
+		BeforeEach(func() {
+			server.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("POST", "/scheduler/iso8601"),
+					ghttp.RespondWith(http.StatusOK, nil),
+				),
+			)
+		})
+
+		It("Makes the request", func() {
+			job := Job{}
+			err := client.AddScheduledJob(&job)
+			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(err).ToNot(HaveOccurred())
+		})
+	})
 })

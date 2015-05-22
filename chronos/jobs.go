@@ -82,3 +82,9 @@ func (client *Client) StartJob(name string, args map[string]string) error {
 	uri := path.Join(ChronosAPIJob, name) + "?" + queryValues.Encode()
 	return client.apiPut(uri, nil)
 }
+
+// AddScheduledJob will add a scheduled job
+// job: The job you would like to schedule
+func (client *Client) AddScheduledJob(job *Job) error {
+	return client.apiPost(ChronosAPIAddScheduledJob, job, nil)
+}
