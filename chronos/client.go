@@ -20,6 +20,7 @@ const (
 type Chronos interface {
 	Jobs() (*Jobs, error)
 	DeleteJob(name string) error
+	StartJob(name string, args map[string]string) error
 }
 
 // A Client can make http requests
@@ -50,6 +51,11 @@ func (client *Client) apiDelete(uri string, result interface{}) error {
 	return err
 }
 
+func (client *Client) apiPut(uri string, result interface{}) error {
+	_, err := client.apiCall(HTTPPut, uri, "", result)
+	return err
+}
+
 func (client *Client) apiCall(method, uri, body string, result interface{}) (int, error) {
 	status, response, err := client.httpCall(method, uri, body)
 
@@ -57,10 +63,12 @@ func (client *Client) apiCall(method, uri, body string, result interface{}) (int
 		return 0, err
 	}
 
-	err = json.NewDecoder(response.Body).Decode(result)
+	if response.ContentLength > 0 {
+		err = json.NewDecoder(response.Body).Decode(result)
 
-	if err != nil {
-		return status, err
+		if err != nil {
+			return status, err
+		}
 	}
 
 	// TODO: Handle error status codes
