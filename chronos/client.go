@@ -20,6 +20,7 @@ const (
 type Chronos interface {
 	Jobs() (*Jobs, error)
 	DeleteJob(name string) error
+	DeleteJobTasks(name string) error
 	StartJob(name string, args map[string]string) error
 }
 

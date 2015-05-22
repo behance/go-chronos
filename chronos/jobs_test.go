@@ -145,6 +145,27 @@ var _ = Describe("Jobs", func() {
 		})
 	})
 
+	Describe("DeleteJobTasks", func() {
+		var (
+			jobName = "fake_job"
+		)
+
+		BeforeEach(func() {
+			server.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("DELETE", "/scheduler/task/kill/"+jobName),
+					ghttp.RespondWith(http.StatusOK, nil),
+				),
+			)
+		})
+
+		It("Makes the delete request", func() {
+			err := client.DeleteJobTasks(jobName)
+			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(err).ToNot(HaveOccurred())
+		})
+	})
+
 	Describe("StartJob", func() {
 		var (
 			jobName = "fake_job"
