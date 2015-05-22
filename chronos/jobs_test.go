@@ -139,8 +139,54 @@ var _ = Describe("Jobs", func() {
 		})
 
 		It("Makes the delete request", func() {
-			client.DeleteJob(jobName)
+			err := client.DeleteJob(jobName)
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(err).ToNot(HaveOccurred())
+		})
+	})
+
+	Describe("StartJob", func() {
+		var (
+			jobName = "fake_job"
+		)
+
+		Context("Starting a job with no arguments", func() {
+			BeforeEach(func() {
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("PUT", "/scheduler/job/"+jobName, ""),
+						ghttp.RespondWith(http.StatusOK, nil),
+					),
+				)
+			})
+
+			It("Makes the start request", func() {
+				err := client.StartJob(jobName, nil)
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+
+		Context("Starting a job with arguments", func() {
+			BeforeEach(func() {
+				server.AppendHandlers(
+					ghttp.CombineHandlers(
+						ghttp.VerifyRequest("PUT", "/scheduler/job/"+jobName, "arg1=value1&arg2=value2"),
+						ghttp.RespondWith(http.StatusOK, nil),
+					),
+				)
+			})
+
+			It("Can pass arguments to the start job request", func() {
+				args := map[string]string{
+					"arg1": "value1",
+					"arg2": "value2",
+				}
+
+				err := client.StartJob(jobName, args)
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(err).ToNot(HaveOccurred())
+			})
 		})
 	})
 })

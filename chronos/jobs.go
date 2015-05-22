@@ -1,6 +1,7 @@
 package chronos
 
 import (
+	"net/url"
 	"path"
 )
 
@@ -60,4 +61,17 @@ func (client *Client) Jobs() (*Jobs, error) {
 // name: The name of job you wish to delete
 func (client *Client) DeleteJob(name string) error {
 	return client.apiDelete(path.Join(ChronosAPIJob, name), nil)
+}
+
+// StartJob can manually start a job
+// name: The name of the job to start
+// args: A map of arguments to append to the job's command
+func (client *Client) StartJob(name string, args map[string]string) error {
+	queryValues := url.Values{}
+	for key, value := range args {
+		queryValues.Add(key, value)
+	}
+
+	uri := path.Join(ChronosAPIJob, name) + "?" + queryValues.Encode()
+	return client.apiPut(uri, nil)
 }
