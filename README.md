@@ -36,3 +36,6 @@ These calls all correspond to endpoints described here: https://github.com/mesos
 - StartJob(name string, args map[string]string) error
 - AddScheduledJob(job *Job) error
 - AddDependentJob(job *Job) error
+
+The following is a simple convenience function:
+- RunOnceNowJob(job *Job) error - This will schedule a job to start immediately and run only one time
