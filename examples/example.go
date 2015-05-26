@@ -16,14 +16,14 @@ func main() {
 	}
 
 	// Add a scheduled job
-	runSchedule, _ := chronos.FormatSchedule(*new(time.Time), "PT2M", "R")
+	runSchedule, _ := chronos.FormatSchedule(*new(time.Time), "PT2M", "R1")
 	container := chronos.Container{
 		Type:  "Docker",
 		Image: "libmesos/ubuntu",
 	}
 	newJob := chronos.Job{
 		Name:      "myTestJob",
-		Command:   "while sleep 10; do date -u +%T; done",
+		Command:   "echo 'Hello World'",
 		Container: &container,
 		Schedule:  runSchedule,
 	}
@@ -46,4 +46,13 @@ func main() {
 	for _, job := range *jobs {
 		fmt.Println("Job Name: ", job.Name)
 	}
+
+	// To run a job immediately, and only once
+	oneTimeJob := chronos.Job{
+		Name:      "myOneTimeJob",
+		Command:   "echo 'Hello World'",
+		Container: &container,
+	}
+	client.RunOnceNowJob(&oneTimeJob)
+	client.DeleteJob("myOneTimeJob")
 }

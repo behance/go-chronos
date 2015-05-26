@@ -213,6 +213,7 @@ var _ = Describe("Jobs", func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("POST", "/scheduler/iso8601"),
+					ghttp.VerifyJSONRepresenting(Job{}),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
 			)
@@ -230,6 +231,7 @@ var _ = Describe("Jobs", func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("POST", "/scheduler/dependency"),
+					ghttp.VerifyJSONRepresenting(Job{}),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
 			)
@@ -238,6 +240,24 @@ var _ = Describe("Jobs", func() {
 		It("Makes the request", func() {
 			job := Job{}
 			Expect(client.AddDependentJob(&job)).To(Succeed())
+			Expect(server.ReceivedRequests()).To(HaveLen(1))
+		})
+	})
+
+	Describe("RunOnceNowJob", func() {
+		BeforeEach(func() {
+			server.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("POST", "/scheduler/iso8601"),
+					ghttp.VerifyJSON(`{"schedule": "R1//P2M"}`),
+					ghttp.RespondWith(http.StatusOK, nil),
+				),
+			)
+		})
+
+		It("Schedules a job to run once, and start immediately", func() {
+			job := Job{}
+			Expect(client.RunOnceNowJob(&job)).To(Succeed())
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
 		})
 	})
