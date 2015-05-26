@@ -2,6 +2,7 @@ package chronos_test
 
 import (
 	"net/http"
+	"time"
 
 	. "github.com/behance/go-chronos/chronos"
 
@@ -11,7 +12,7 @@ import (
 	ghttp "github.com/onsi/gomega/ghttp"
 )
 
-var _ = Describe("JobsAPI", func() {
+var _ = Describe("Jobs", func() {
 	var (
 		config_stub Config
 		client      Chronos
@@ -139,9 +140,8 @@ var _ = Describe("JobsAPI", func() {
 		})
 
 		It("Makes the delete request", func() {
-			err := client.DeleteJob(jobName)
+			Expect(client.DeleteJob(jobName)).To(Succeed())
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
-			Expect(err).ToNot(HaveOccurred())
 		})
 	})
 
@@ -160,9 +160,8 @@ var _ = Describe("JobsAPI", func() {
 		})
 
 		It("Makes the delete request", func() {
-			err := client.DeleteJobTasks(jobName)
+			Expect(client.DeleteJobTasks(jobName)).To(Succeed())
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
-			Expect(err).ToNot(HaveOccurred())
 		})
 	})
 
@@ -182,9 +181,8 @@ var _ = Describe("JobsAPI", func() {
 			})
 
 			It("Makes the start request", func() {
-				err := client.StartJob(jobName, nil)
+				Expect(client.StartJob(jobName, nil)).To(Succeed())
 				Expect(server.ReceivedRequests()).To(HaveLen(1))
-				Expect(err).ToNot(HaveOccurred())
 			})
 		})
 
@@ -204,9 +202,8 @@ var _ = Describe("JobsAPI", func() {
 					"arg2": "value2",
 				}
 
-				err := client.StartJob(jobName, args)
+				Expect(client.StartJob(jobName, args)).To(Succeed())
 				Expect(server.ReceivedRequests()).To(HaveLen(1))
-				Expect(err).ToNot(HaveOccurred())
 			})
 		})
 	})
@@ -223,9 +220,65 @@ var _ = Describe("JobsAPI", func() {
 
 		It("Makes the request", func() {
 			job := Job{}
-			err := client.AddScheduledJob(&job)
+			Expect(client.AddScheduledJob(&job)).To(Succeed())
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
-			Expect(err).ToNot(HaveOccurred())
+		})
+	})
+
+	Describe("AddDependentJob", func() {
+		BeforeEach(func() {
+			server.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("POST", "/scheduler/dependency"),
+					ghttp.RespondWith(http.StatusOK, nil),
+				),
+			)
+		})
+
+		It("Makes the request", func() {
+			job := Job{}
+			Expect(client.AddDependentJob(&job)).To(Succeed())
+			Expect(server.ReceivedRequests()).To(HaveLen(1))
+		})
+	})
+
+	Describe("FormatSchedule", func() {
+		It("Returns a properly formatted time string", func() {
+			startTime := time.Date(2015, time.May, 26, 15, 0, 0, 0, time.UTC)
+			interval := "P10M"
+			reps := "R10"
+			expectedOutput := "R10/2015-05-26T15:00:00Z/P10M"
+
+			Expect(FormatSchedule(startTime, interval, reps)).To(Equal(expectedOutput))
+		})
+
+		It("Works with a zero time", func() {
+			startTime := *new(time.Time)
+			interval := "P10M"
+			reps := "R10"
+			expectedOutput := "R10//P10M"
+
+			Expect(FormatSchedule(startTime, interval, reps)).To(Equal(expectedOutput))
+		})
+
+		It("Errors if interval does not start with a P", func() {
+			startTime := new(time.Time)
+			interval := "10M"
+			reps := "R10"
+
+			schedule, err := FormatSchedule(*startTime, interval, reps)
+			Expect(schedule).To(Equal(""))
+			Expect(err).To(MatchError("Interval string not formatted correctly"))
+		})
+
+		It("Errors if reps do not start with R", func() {
+			startTime := new(time.Time)
+			interval := "P10M"
+			reps := "10"
+
+			schedule, err := FormatSchedule(*startTime, interval, reps)
+			Expect(schedule).To(Equal(""))
+			Expect(err).To(MatchError("Repetitions string not formatted correctly"))
 		})
 	})
 })

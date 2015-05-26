@@ -23,6 +23,7 @@ type Chronos interface {
 	DeleteJobTasks(name string) error
 	StartJob(name string, args map[string]string) error
 	AddScheduledJob(job *Job) error
+	AddDependentJob(job *Job) error
 }
 
 // A Client can make http requests
