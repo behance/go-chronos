@@ -22,6 +22,8 @@ type Chronos interface {
 	DeleteJob(name string) error
 	DeleteJobTasks(name string) error
 	StartJob(name string, args map[string]string) error
+	AddScheduledJob(job *Job) error
+	AddDependentJob(job *Job) error
 }
 
 // A Client can make http requests
@@ -57,7 +59,18 @@ func (client *Client) apiPut(uri string, result interface{}) error {
 	return err
 }
 
-func (client *Client) apiCall(method, uri, body string, result interface{}) (int, error) {
+func (client *Client) apiPost(uri string, postData interface{}, result interface{}) error {
+	postDataString, err := json.Marshal(postData)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = client.apiCall(HTTPPost, uri, string(postDataString), result)
+	return err
+}
+
+func (client *Client) apiCall(method string, uri string, body string, result interface{}) (int, error) {
 	status, response, err := client.httpCall(method, uri, body)
 
 	if err != nil {
