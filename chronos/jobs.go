@@ -1,8 +1,12 @@
 package chronos
 
 import (
+	"errors"
+	"fmt"
 	"net/url"
 	"path"
+	"strings"
+	"time"
 )
 
 // Jobs is a slice of jobs
@@ -43,6 +47,25 @@ type Job struct {
 	ScheduleTimeZone       string              `json:"scheduleTimeZone,omitempty"`
 	Constraints            []map[string]string `json:"constraints,omitempty"`
 	Parents                []string            `json:"parents,omitempty"`
+}
+
+// FormatSchedule will return a chronos schedule that can be used by the job
+// See https://github.com/mesos/chronos/blob/master/docs/docs/api.md#adding-a-scheduled-job for details
+// startTime (time.Time): when you want the job to start. A zero time instant means start immediately.
+// interval (string): How often to run the job.
+// reps (string): How many times to run the job.
+func FormatSchedule(startTime time.Time, interval string, reps string) (string, error) {
+	if err := validateInterval(interval); err != nil {
+		return "", err
+	}
+
+	if err := validateReps(reps); err != nil {
+		return "", err
+	}
+
+	schedule := fmt.Sprintf("%s/%s/%s", reps, formatTimeString(startTime), interval)
+
+	return schedule, nil
 }
 
 // Jobs gets all jobs that chronos knows about
@@ -87,4 +110,33 @@ func (client *Client) StartJob(name string, args map[string]string) error {
 // job: The job you would like to schedule
 func (client *Client) AddScheduledJob(job *Job) error {
 	return client.apiPost(ChronosAPIAddScheduledJob, job, nil)
+}
+
+// AddDependentJob will add a dependent job
+func (client *Client) AddDependentJob(job *Job) error {
+	return client.apiPost(ChronosAPIAddDependentJob, job, nil)
+}
+
+func validateReps(reps string) error {
+	if strings.HasPrefix(reps, "R") {
+		return nil
+	}
+
+	return errors.New("Repetitions string not formatted correctly")
+}
+
+func validateInterval(interval string) error {
+	if strings.HasPrefix(interval, "P") {
+		return nil
+	}
+
+	return errors.New("Interval string not formatted correctly")
+}
+
+func formatTimeString(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	} else {
+		return t.Format(time.RFC3339Nano)
+	}
 }

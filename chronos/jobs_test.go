@@ -11,7 +11,7 @@ import (
 	ghttp "github.com/onsi/gomega/ghttp"
 )
 
-var _ = Describe("Jobs", func() {
+var _ = Describe("JobsAPI", func() {
 	var (
 		config_stub Config
 		client      Chronos
