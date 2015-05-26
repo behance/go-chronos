@@ -26,3 +26,13 @@ if err != nil {
 jobs, err := client.Jobs()   // To get all jobs chronos knows about
 ...
 ```
+
+##Api Calls
+These calls all correspond to endpoints described here: https://github.com/mesos/chronos/blob/master/docs/docs/api.md
+
+- Jobs() (*Jobs, error)
+- DeleteJob(name string) error
+- DeleteJobTasks(name string) error
+- StartJob(name string, args map[string]string) error
+- AddScheduledJob(job *Job) error
+- AddDependentJob(job *Job) error
