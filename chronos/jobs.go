@@ -15,8 +15,8 @@ type Jobs []Job
 // A Job defines a chronos job
 // https://github.com/mesos/chronos/blob/master/docs/docs/api.md#job-configuration
 type Job struct {
-	Name                   string              `json:"name,omitempty"`
-	Command                string              `json:"command,omitempty"`
+	Name                   string              `json:"name"`
+	Command                string              `json:"command"`
 	Shell                  bool                `json:"shell,omitempty"`
 	Epsilon                string              `json:"epsilon,omitempty"`
 	Executor               string              `json:"executor,omitempty"`

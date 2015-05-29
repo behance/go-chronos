@@ -249,7 +249,7 @@ var _ = Describe("Jobs", func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("POST", "/scheduler/iso8601"),
-					ghttp.VerifyJSON(`{"schedule": "R1//P2M"}`),
+					ghttp.VerifyJSON(`{"name":"","command":"","schedule":"R1//P2M"}`),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
 			)
