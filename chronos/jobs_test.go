@@ -21,6 +21,11 @@ var _ = Describe("Jobs", func() {
 
 	BeforeEach(func() {
 		server = ghttp.NewServer()
+		server.AppendHandlers(
+			ghttp.CombineHandlers(
+				ghttp.VerifyRequest("GET", "/scheduler/jobs"),
+			),
+		)
 
 		config_stub = Config{
 			URL:            server.URL(),
@@ -28,6 +33,8 @@ var _ = Describe("Jobs", func() {
 			RequestTimeout: 5,
 		}
 
+		// This will make a request and I dont know how to reset it
+		// All checks for number of requests need to add one
 		client, _ = NewClient(config_stub)
 	})
 
@@ -85,7 +92,7 @@ var _ = Describe("Jobs", func() {
 
 		It("Makes a request to get all jobs", func() {
 			client.Jobs()
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(server.ReceivedRequests()).To(HaveLen(2))
 		})
 
 		It("Correctly unmarshalls the response", func() {
@@ -141,7 +148,7 @@ var _ = Describe("Jobs", func() {
 
 		It("Makes the delete request", func() {
 			Expect(client.DeleteJob(jobName)).To(Succeed())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(server.ReceivedRequests()).To(HaveLen(2))
 		})
 	})
 
@@ -161,7 +168,7 @@ var _ = Describe("Jobs", func() {
 
 		It("Makes the delete request", func() {
 			Expect(client.DeleteJobTasks(jobName)).To(Succeed())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(server.ReceivedRequests()).To(HaveLen(2))
 		})
 	})
 
@@ -182,7 +189,7 @@ var _ = Describe("Jobs", func() {
 
 			It("Makes the start request", func() {
 				Expect(client.StartJob(jobName, nil)).To(Succeed())
-				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(server.ReceivedRequests()).To(HaveLen(2))
 			})
 		})
 
@@ -203,7 +210,7 @@ var _ = Describe("Jobs", func() {
 				}
 
 				Expect(client.StartJob(jobName, args)).To(Succeed())
-				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(server.ReceivedRequests()).To(HaveLen(2))
 			})
 		})
 	})
@@ -222,7 +229,7 @@ var _ = Describe("Jobs", func() {
 		It("Makes the request", func() {
 			job := Job{}
 			Expect(client.AddScheduledJob(&job)).To(Succeed())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(server.ReceivedRequests()).To(HaveLen(2))
 		})
 	})
 
@@ -240,7 +247,7 @@ var _ = Describe("Jobs", func() {
 		It("Makes the request", func() {
 			job := Job{}
 			Expect(client.AddDependentJob(&job)).To(Succeed())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(server.ReceivedRequests()).To(HaveLen(2))
 		})
 	})
 
@@ -258,7 +265,7 @@ var _ = Describe("Jobs", func() {
 		It("Schedules a job to run once, and start immediately", func() {
 			job := Job{}
 			Expect(client.RunOnceNowJob(&job)).To(Succeed())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
+			Expect(server.ReceivedRequests()).To(HaveLen(2))
 		})
 	})
 

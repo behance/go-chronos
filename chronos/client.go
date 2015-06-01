@@ -2,8 +2,10 @@ package chronos
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -29,6 +31,7 @@ type Chronos interface {
 
 // A Client can make http requests
 type Client struct {
+	url    *url.URL
 	config Config
 	http   *http.Client
 }
@@ -37,42 +40,56 @@ type Client struct {
 func NewClient(config Config) (Chronos, error) {
 	client := new(Client)
 
+	var err error
+	client.url, err = url.Parse(config.URL)
+	if err != nil {
+		return nil, err
+	}
+
 	client.config = config
 
 	client.http = &http.Client{
 		Timeout: (time.Duration(config.RequestTimeout) * time.Second),
 	}
+
+	// Verify you can reach chronos
+	_, err = client.Jobs()
+	if err != nil {
+		return nil, errors.New("Could not reach chronos cluster: " + err.Error())
+	}
+
 	return client, nil
 }
 
-func (client *Client) apiGet(uri string, result interface{}) error {
-	_, err := client.apiCall(HTTPGet, uri, "", result)
+func (client *Client) apiGet(uri string, queryParams map[string]string, result interface{}) error {
+	_, err := client.apiCall(HTTPGet, uri, queryParams, "", result)
 	return err
 }
 
-func (client *Client) apiDelete(uri string, result interface{}) error {
-	_, err := client.apiCall(HTTPDelete, uri, "", result)
+func (client *Client) apiDelete(uri string, queryParams map[string]string, result interface{}) error {
+	_, err := client.apiCall(HTTPDelete, uri, queryParams, "", result)
 	return err
 }
 
-func (client *Client) apiPut(uri string, result interface{}) error {
-	_, err := client.apiCall(HTTPPut, uri, "", result)
+func (client *Client) apiPut(uri string, queryParams map[string]string, result interface{}) error {
+	_, err := client.apiCall(HTTPPut, uri, queryParams, "", result)
 	return err
 }
 
-func (client *Client) apiPost(uri string, postData interface{}, result interface{}) error {
+func (client *Client) apiPost(uri string, queryParams map[string]string, postData interface{}, result interface{}) error {
 	postDataString, err := json.Marshal(postData)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = client.apiCall(HTTPPost, uri, string(postDataString), result)
+	_, err = client.apiCall(HTTPPost, uri, queryParams, string(postDataString), result)
 	return err
 }
 
-func (client *Client) apiCall(method string, uri string, body string, result interface{}) (int, error) {
-	status, response, err := client.httpCall(method, uri, body)
+func (client *Client) apiCall(method string, uri string, queryParams map[string]string, body string, result interface{}) (int, error) {
+	client.buildURL(uri, queryParams)
+	status, response, err := client.httpCall(method, body)
 
 	if err != nil {
 		return 0, err
@@ -87,7 +104,20 @@ func (client *Client) apiCall(method string, uri string, body string, result int
 	}
 
 	// TODO: Handle error status codes
+	if status < 200 || status > 299 {
+		return status, errors.New(response.Status)
+	}
 	return status, nil
+}
+
+func (client *Client) buildURL(path string, queryParams map[string]string) {
+	query := client.url.Query()
+	for k, v := range queryParams {
+		query.Add(k, v)
+	}
+	client.url.RawQuery = query.Encode()
+
+	client.url.Path = path
 }
 
 // TODO: think about pulling out a Request struct/object/thing
@@ -96,9 +126,8 @@ func (client *Client) applyRequestHeaders(request *http.Request) {
 	request.Header.Add("Accept", "application/json")
 }
 
-func (client *Client) newRequest(method, uri, body string) (*http.Request, error) {
-	url := fmt.Sprintf("%s/%s", client.config.URL, uri)
-	request, err := http.NewRequest(method, url, strings.NewReader(body))
+func (client *Client) newRequest(method string, body string) (*http.Request, error) {
+	request, err := http.NewRequest(method, client.url.String(), strings.NewReader(body))
 
 	if err != nil {
 		return nil, err
@@ -108,8 +137,8 @@ func (client *Client) newRequest(method, uri, body string) (*http.Request, error
 	return request, nil
 }
 
-func (client *Client) httpCall(method, uri, body string) (int, *http.Response, error) {
-	request, err := client.newRequest(method, uri, body)
+func (client *Client) httpCall(method string, body string) (int, *http.Response, error) {
+	request, err := client.newRequest(method, body)
 
 	if err != nil {
 		return 0, nil, err
