@@ -12,6 +12,7 @@ func main() {
 	client, err := chronos.NewClient(config)
 
 	if err != nil {
+		fmt.Println("Could not create client: ", err)
 		return
 	}
 
@@ -31,7 +32,7 @@ func main() {
 	client.AddScheduledJob(&newJob)
 
 	// Get all current jobs
-	jobs, _ := client.Jobs()
+	jobs, err := client.Jobs()
 	fmt.Println("Current jobs:")
 	for _, job := range *jobs {
 		fmt.Println("Job Name: ", job.Name)
