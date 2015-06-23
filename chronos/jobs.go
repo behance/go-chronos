@@ -70,7 +70,7 @@ func FormatSchedule(startTime time.Time, interval string, reps string) (string, 
 // RunOnceNowSchedule will return a schedule that starts immediately, runs once,
 // and runs every 2 minutes until successful
 func RunOnceNowSchedule() string {
-	return "R1//P2M"
+	return "R1//PT2M"
 }
 
 // Jobs gets all jobs that chronos knows about
