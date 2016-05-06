@@ -6,6 +6,6 @@ type Container struct {
 	Image          string              `json:"image,omitempty"`
 	Network        string              `json:"network,omitempty"`
 	Volumes        []map[string]string `json:"volumes,omitempty"`
-    Parameters     []map[string]string `json:"parameters,omitempty"`
-    ForcePullImage bool                `json:"forcePullImage,omitempty"`
+	Parameters     []map[string]string `json:"parameters,omitempty"`
+	ForcePullImage bool                `json:"forcePullImage,omitempty"`
 }
