@@ -27,6 +27,7 @@ type Chronos interface {
 	AddScheduledJob(job *Job) error
 	AddDependentJob(job *Job) error
 	RunOnceNowJob(job *Job) error
+	UnscheduleJob(job *Job) error
 }
 
 // A Client can make http requests
