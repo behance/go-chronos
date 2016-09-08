@@ -96,7 +96,7 @@ func (client *Client) apiCall(method string, uri string, queryParams map[string]
 		return 0, err
 	}
 
-	if response.ContentLength > 0 {
+	if response.ContentLength != 0 {
 		err = json.NewDecoder(response.Body).Decode(result)
 
 		if err != nil {
