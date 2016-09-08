@@ -80,7 +80,8 @@ var _ = Describe("Jobs", func() {
 								"type":"docker",
 								"image":"libmesos/ubuntu",
 								"network":"HOST",
-								"volumes":[]
+								"volumes":[],
+								"parameters":[]
 							},
 							"schedule":"R/2015-05-21T18:14:00.000Z/PT2M",
 							"scheduleTimeZone":""
@@ -122,10 +123,11 @@ var _ = Describe("Jobs", func() {
 					Arguments:            []string{},
 					RunAsUser:            "root",
 					Container: &Container{
-						Type:    "docker",
-						Image:   "libmesos/ubuntu",
-						Network: "HOST",
-						Volumes: []map[string]string{},
+						Type:       "docker",
+						Image:      "libmesos/ubuntu",
+						Network:    "HOST",
+						Volumes:    []map[string]string{},
+						Parameters: []map[string]string{},
 					},
 				},
 			}))

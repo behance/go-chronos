@@ -46,7 +46,6 @@ type Job struct {
 	ScheduleTimeZone       string              `json:"scheduleTimeZone,omitempty"`
 	Constraints            []map[string]string `json:"constraints,omitempty"`
 	Parents                []string            `json:"parents,omitempty"`
-	Parameters             []map[string]string `json:"parameters,omitempty"`
 }
 
 // FormatSchedule will return a chronos schedule that can be used by the job
