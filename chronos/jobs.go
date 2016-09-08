@@ -90,7 +90,7 @@ func (client *Client) Jobs() (*Jobs, error) {
 // UnscheduleJob will delete a chronos job
 // name: The name of job you wish to delete
 func (client *Client) UnscheduleJob(job *Job) error {
-	job.Schedule = "R0//PT2M"
+	job.Schedule = "R0//PT0M"
 	return client.apiPost(ChronosAPIAddScheduledJob, nil, job, nil)
 }
 
