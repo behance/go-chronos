@@ -1,9 +1,9 @@
-#go-chronos
+# go-chronos
 
 Go wrapper for the chronos API.
 
 
-##Usage
+## Usage
 See the examples directory for some more examples.
 
 ```go
@@ -27,7 +27,7 @@ jobs, err := client.Jobs()   // To get all jobs chronos knows about
 ...
 ```
 
-##Api Calls
+## Api Calls
 These calls all correspond to endpoints described here: https://github.com/mesos/chronos/blob/master/docs/docs/api.md
 
 - Jobs() (*Jobs, error)
