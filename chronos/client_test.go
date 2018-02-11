@@ -35,7 +35,7 @@ var _ = Describe("Client", func() {
 		It("Returns a new client", func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/scheduler/jobs"),
+					ghttp.VerifyRequest("GET", "/v1/scheduler/jobs"),
 				),
 			)
 
@@ -48,7 +48,7 @@ var _ = Describe("Client", func() {
 		It("Errors if it cannot hit chronos", func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/scheduler/jobs"),
+					ghttp.VerifyRequest("GET", "/v1/scheduler/jobs"),
 					ghttp.RespondWith(http.StatusInternalServerError, nil),
 				),
 			)

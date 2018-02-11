@@ -23,7 +23,7 @@ var _ = Describe("Jobs", func() {
 		server = ghttp.NewServer()
 		server.AppendHandlers(
 			ghttp.CombineHandlers(
-				ghttp.VerifyRequest("GET", "/scheduler/jobs"),
+				ghttp.VerifyRequest("GET", "/v1/scheduler/jobs"),
 			),
 		)
 
@@ -46,7 +46,7 @@ var _ = Describe("Jobs", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("GET", "/scheduler/jobs"),
+					ghttp.VerifyRequest("GET", "/v1/scheduler/jobs"),
 					ghttp.RespondWith(http.StatusOK, `[
 						{
 							"name":"dockerjob",
@@ -84,7 +84,8 @@ var _ = Describe("Jobs", func() {
 								"parameters":[]
 							},
 							"schedule":"R/2015-05-21T18:14:00.000Z/PT2M",
-							"scheduleTimeZone":""
+							"scheduleTimeZone":"",
+							"constraints":[["rack", "EQUALS", "rack-1"]]
 						}
           ]`),
 				),
@@ -129,6 +130,7 @@ var _ = Describe("Jobs", func() {
 						Volumes:    []map[string]string{},
 						Parameters: []map[string]string{},
 					},
+					Constraints:          [][]string{[]string{"rack", "EQUALS", "rack-1"}},
 				},
 			}))
 		})
@@ -142,7 +144,7 @@ var _ = Describe("Jobs", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("DELETE", "/scheduler/job/"+jobName),
+					ghttp.VerifyRequest("DELETE", "/v1/scheduler/job/"+jobName),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
 			)
@@ -162,7 +164,7 @@ var _ = Describe("Jobs", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("DELETE", "/scheduler/task/kill/"+jobName),
+					ghttp.VerifyRequest("DELETE", "/v1/scheduler/task/kill/"+jobName),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
 			)
@@ -183,7 +185,7 @@ var _ = Describe("Jobs", func() {
 			BeforeEach(func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("PUT", "/scheduler/job/"+jobName, ""),
+						ghttp.VerifyRequest("PUT", "/v1/scheduler/job/"+jobName, ""),
 						ghttp.RespondWith(http.StatusOK, nil),
 					),
 				)
@@ -199,7 +201,7 @@ var _ = Describe("Jobs", func() {
 			BeforeEach(func() {
 				server.AppendHandlers(
 					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("PUT", "/scheduler/job/"+jobName, "arg1=value1&arg2=value2"),
+						ghttp.VerifyRequest("PUT", "/v1/scheduler/job/"+jobName, "arg1=value1&arg2=value2"),
 						ghttp.RespondWith(http.StatusOK, nil),
 					),
 				)
@@ -221,7 +223,7 @@ var _ = Describe("Jobs", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("POST", "/scheduler/iso8601"),
+					ghttp.VerifyRequest("POST", "/v1/scheduler/iso8601"),
 					ghttp.VerifyJSONRepresenting(Job{}),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
@@ -239,7 +241,7 @@ var _ = Describe("Jobs", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("POST", "/scheduler/dependency"),
+					ghttp.VerifyRequest("POST", "/v1/scheduler/dependency"),
 					ghttp.VerifyJSONRepresenting(Job{}),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
@@ -257,7 +259,7 @@ var _ = Describe("Jobs", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
-					ghttp.VerifyRequest("POST", "/scheduler/iso8601"),
+					ghttp.VerifyRequest("POST", "/v1/scheduler/iso8601"),
 					ghttp.VerifyJSON(`{"name":"","command":"","epsilon":"PT10M","schedule":"R1//PT2M"}`),
 					ghttp.RespondWith(http.StatusOK, nil),
 				),
