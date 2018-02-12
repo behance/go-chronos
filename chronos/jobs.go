@@ -44,7 +44,7 @@ type Job struct {
 	Container              *Container          `json:"container,omitempty"`
 	Schedule               string              `json:"schedule,omitempty"`
 	ScheduleTimeZone       string              `json:"scheduleTimeZone,omitempty"`
-	Constraints            []map[string]string `json:"constraints,omitempty"`
+	Constraints            [][]string          `json:"constraints,omitempty"`
 	Parents                []string            `json:"parents,omitempty"`
 }
 
