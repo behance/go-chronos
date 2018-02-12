@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/behance/go-chronos.svg?branch=master)](https://travis-ci.org/behance/go-chronos)
+
 # go-chronos
 
 Go wrapper for the chronos API.
