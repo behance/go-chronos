@@ -1,0 +1,14 @@
+go_import_path: github.com/behance/go-chronos
+language: go
+sudo: false
+before_install:
+  - go get github.com/mattn/goveralls
+  - go get github.com/Masterminds/glide
+  - go get github.com/golang/lint/golint
+  - glide install
+before_script:
+  - golint -set_exit_status $(go list ./...)
+  - go vet ./...
+script:
+  - rm -rf examples # because the examples are hard-coded to import github.com/behance/go-chronos/chronos and so fails with forks
+  - $GOPATH/bin/goveralls -service=travis-ci
