@@ -31,6 +31,7 @@ var _ = Describe("Jobs", func() {
 			URL:            server.URL(),
 			Debug:          false,
 			RequestTimeout: 5,
+			APIPrefix:      "v1",
 		}
 
 		// This will make a request and I dont know how to reset it

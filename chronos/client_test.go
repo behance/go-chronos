@@ -24,6 +24,7 @@ var _ = Describe("Client", func() {
 			URL:            server.URL(),
 			Debug:          false,
 			RequestTimeout: 5,
+			APIPrefix:      "v1",
 		}
 	})
 
@@ -55,6 +56,22 @@ var _ = Describe("Client", func() {
 
 			_, err := NewClient(config_stub)
 			Expect(err).To(MatchError("Could not reach chronos cluster: 500 Internal Server Error"))
+		})
+
+		It("Gracefully handles no API prefix", func() {
+			server.AppendHandlers(
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("GET", "/scheduler/jobs"),
+				),
+			)
+
+			config_stub = NewDefaultConfig()
+			config_stub.URL = server.URL()
+
+			client, err := NewClient(config_stub)
+
+			Expect(client).To(BeAssignableToTypeOf(new(Client)))
+			Expect(err).To(BeNil())
 		})
 	})
 })
