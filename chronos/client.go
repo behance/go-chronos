@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path"
 	"strings"
 	"time"
 )
@@ -111,14 +112,14 @@ func (client *Client) apiCall(method string, uri string, queryParams map[string]
 	return status, nil
 }
 
-func (client *Client) buildURL(path string, queryParams map[string]string) {
+func (client *Client) buildURL(uri string, queryParams map[string]string) {
 	query := client.url.Query()
 	for k, v := range queryParams {
 		query.Add(k, v)
 	}
 	client.url.RawQuery = query.Encode()
 
-	client.url.Path = path
+	client.url.Path = path.Join(client.config.APIPrefix, uri)
 }
 
 // TODO: think about pulling out a Request struct/object/thing
