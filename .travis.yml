@@ -4,7 +4,7 @@ sudo: false
 before_install:
   - go get github.com/Masterminds/glide
   - go get github.com/onsi/ginkgo/ginkgo
-  - go get github.com/golang/lint/golint
+  - go get golang.org/x/lint/golint
   - glide install
 script:
   - make test
